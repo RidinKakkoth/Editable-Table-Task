@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Table</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        td[contenteditable] {
+            background-color: #fff9c4;
+        }
+        .task-column {
+             width: 350px; 
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function EditableTable() {
+
+            const tasks = [
+                "Onboarding Call", 
+                "Google Search Console Access", 
+                "Google Analytics Access", 
+                "Website Access", 
+                "Technical Audit", 
+                "Anchor Text and Semantic Analysis", 
+                "Competitor Analysis", 
+                "Anchor Text / URL Mapping", 
+                "Google Data Studio Report + Local Reporting Suite", 
+                "Site Level Optimization", 
+                "On Page Optimization", 
+                "Content Creation", 
+                "Content Publishing", 
+                "Premium Press Release", 
+                "Authority Niche Placements", 
+                "Review Management", 
+                "Index Links", 
+                "Video Recap"
+            ];
+
+            const [data, setData] = useState(Array(tasks.length).fill(Array(3).fill("")));
+
+            const handleEdit = (taskIndex, columnIndex, event) => {
+                const newData = data.map((row, i) => 
+                    i === taskIndex ? row.map((cell, j) => j === columnIndex ? event.target.innerText : cell) : row
+                );
+                setData(newData);
+            };
+
+            const handleSubmit = () => {
+                console.log("Data ready to post to API:", data);
+                // API POST call would go here
+            };
+
+            return (
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th  colSpan={data[0].length + 1}>MONTH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tasks.map((task, taskIndex) => (
+                                <tr key={taskIndex}>
+                                    <td className="task-column">{task}</td>
+                                    {data[taskIndex].map((_, columnIndex) => (
+                                        <td
+                                            key={columnIndex}
+                                            contentEditable
+                                            onBlur={(event) => handleEdit(taskIndex, columnIndex, event)}
+                                        >
+                                            {data[taskIndex][columnIndex]}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <button onClick={handleSubmit}>Submit</button>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<EditableTable />, document.getElementById('root'));
+    </script>
+</body>
+</html>
